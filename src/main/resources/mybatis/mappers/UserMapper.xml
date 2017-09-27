@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tarena.ht.mapper.UserMapper">
+
+    <!--查询所有的用户-->
+    <select id="findUserList" resultMap="userRM">
+      SELECT * FROM (
+      SELECT * FROM USER_P u
+      LEFT JOIN(
+        SELECT p.USER_INFO_ID,p.NAME,p.CARD_NO,p.MANAGER_ID,p.JOIN_DATE,p.SALARY,p.BIRTHDAY,p.GENDER,p.STATION,
+        p.TELEPHONE,p.USER_LEVEL,m.m_id,m.m_name
+        FROM USER_INFO_P p
+      LEFT JOIN
+        (SELECT  USER_INFO_ID AS m_id,NAME AS m_name FROM USER_INFO_P)m
+                ON p.MANAGER_ID=m.m_id) q
+        ON u.USER_ID=q.USER_INFO_ID)us
+      LEFT JOIN (SELECT DEPT_ID,PARENT_ID,DEPT_NAME,STATE FROM DEPT_P)d
+      ON us.DEPT_ID=d.DEPT_ID
+
+    </select>
+    <resultMap id="userRM" type="User" autoMapping="true">
+        <id property="userId" column="USER_ID"/>
+        <!--封装UserInfo信息-->
+        <association property="userInfo" javaType="UserInfo">
+            <id property="userInfoId" column="USER_INFO_ID"/>
+            <result property="name" column="NAME"/>
+            <result property="cardNo" column="CARD_NO"/>
+            <result property="joinDate" column="JOIN_DATE"/>
+            <result property="salary" column="SALARY"/>
+            <result property="birthday" column="BIRTHDAY"/>
+            <result property="gender" column="GENDER"/>
+            <result property="station" column="STATION"/>
+            <result property="telephone" column="TELEPHONE"/>
+            <result property="userLevel" column="USER_LEVEL"/>
+            <result property="remark" column="REMARK"/>
+            <result property="orderNo" column="ORDER_NO"/>
+            <result property="state" column=""/>
+            <!--自关联上级领导- 一对一    -->
+            <association property="manager" javaType="UserInfo">
+                <id property="userInfoId" column="m_id"/>
+                <result property="name" column="m_name"/>
+            </association>
+
+        </association>
+        <!--封装dept-->
+        <association property="dept" javaType="Dept">
+            <!--dept主键ID  -->
+            <id property="deptId" column="DEPT_ID"/>
+            <result property="deptName" column="DEPT_NAME"/>
+        </association>
+    </resultMap>
+    <select id="findMangerList" resultType="java.util.Map">
+        SELECT u.USER_ID AS "userId",uf.NAME AS "name"
+        FROM USER_P u
+        LEFT JOIN USER_INFO_P uf
+        ON u.USER_ID=uf.USER_INFO_ID
+        WHERE u.DEPT_ID IN ((
+            SELECT d.dept_id
+            FROM dept_p d
+            LEFT JOIN dept_p p
+            ON d.PARENT_ID=p.dept_id
+            WHERE d.dept_id=#{deptId}
+        ),#{deptId})
+    </select>
+    <delete id="deleteUser">v
+        delete from user_p where user_id in(
+        <foreach collection="array" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </delete>
+    <update id="updateUserState">
+        update user_p set state=#{state} where user_id= in(
+        <foreach collection="userIds" item="userId" separator=",">
+            #{userId}
+        </foreach>
+        )
+    </update>
+    <insert id="saveUser" parameterType="User">
+      insert into user_p values(
+			#{userId},
+			#{dept.deptId},
+			#{username},
+			#{password},
+			#{state},
+			#{createBy,jdbcType=VARCHAR},
+			#{createDept,jdbcType=VARCHAR},
+			#{createTime,jdbcType=DATE},
+			#{updateBy,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=DATE}
+		)
+
+    </insert>
+
+    <!--为用户分配角色  -->
+    <insert id="saveUserRole">
+        insert into role_user_p values(
+        #{roleId,jdbcType=VARCHAR},
+        #{userId,jdbcType=VARCHAR})
+    </insert>
+    <select id="findUserByN_P" resultMap="userRM">
+        SELECT * FROM (
+      SELECT * FROM USER_P u
+      LEFT JOIN(
+        SELECT p.USER_INFO_ID,p.NAME,p.CARD_NO,p.MANAGER_ID,p.JOIN_DATE,p.SALARY,p.BIRTHDAY,p.GENDER,p.STATION,
+        p.TELEPHONE,p.USER_LEVEL,m.m_id,m.m_name
+        FROM USER_INFO_P p
+      LEFT JOIN
+        (SELECT  USER_INFO_ID AS m_id,NAME AS m_name FROM USER_INFO_P)m
+                ON p.MANAGER_ID=m.m_id) q
+        ON u.USER_ID=q.USER_INFO_ID)us
+      LEFT JOIN (SELECT DEPT_ID,PARENT_ID,DEPT_NAME,STATE FROM DEPT_P)d
+      ON us.DEPT_ID=d.DEPT_ID
+      where us.username=#{username} AND us.PASSWORD=#{password}
+
+    </select>
+    <select id="findUserByname" resultMap="userRM">
+           SELECT * FROM (
+      SELECT * FROM USER_P u
+      LEFT JOIN(
+        SELECT p.USER_INFO_ID,p.NAME,p.CARD_NO,p.MANAGER_ID,p.JOIN_DATE,p.SALARY,p.BIRTHDAY,p.GENDER,p.STATION,
+        p.TELEPHONE,p.USER_LEVEL,m.m_id,m.m_name
+        FROM USER_INFO_P p
+      LEFT JOIN
+        (SELECT  USER_INFO_ID AS m_id,NAME AS m_name FROM USER_INFO_P)m
+                ON p.MANAGER_ID=m.m_id) q
+        ON u.USER_ID=q.USER_INFO_ID)us
+      LEFT JOIN (SELECT DEPT_ID,PARENT_ID,DEPT_NAME,STATE FROM DEPT_P)d
+      ON us.DEPT_ID=d.DEPT_ID
+      where us.username=#{username}
+    </select>
+
+</mapper>

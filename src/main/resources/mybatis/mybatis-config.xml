@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<settings>
+		<!-- 开启驼峰自动映射 
+			属性deptId   数据库字段dept_id  自动映射失效
+			映射关系  数据库中dept_id会将下划线自动去除  deptid
+		-->
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+		<!-- 二级缓存的总开关 -->
+		<setting name="cacheEnabled" value="false" />
+	</settings>
+
+	
+</configuration>

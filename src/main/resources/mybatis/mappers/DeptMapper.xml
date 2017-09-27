@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tarena.ht.mapper.DeptMapper">
+    <select id="findDeptList" resultMap="deptRM">
+        SELECT * from DEPT_P d
+            LEFT JOIN
+            (SELECT DEPT_ID AS p_id,DEPT_NAME AS p_name FROM DEPT_P)p
+                ON d.PARENT_ID=p.p_id
+        ORDER BY DEPT_ID
+    </select>
+    <!--封装部门列表数据 有了别名包直接写类名-->
+    <resultMap id="deptRM" type="Dept" autoMapping="true">
+        <!--主键-->
+        <id property="deptId" column="DEPT_ID"/>
+        <!--一对一关联关系-->
+        <association property="parentDept" javaType="Dept">
+            <id property="deptId" column="P_ID"/>
+            <result property="deptName" column="P_NAME"/>
+        </association>
+    </resultMap>
+
+    <!--更改部门状态-->
+    <update id="updateState">
+            UPDATE  dept_p SET state=#{state}
+            WHERE dept_id IN (
+                <foreach collection="deptIds" separator="," item="id">
+                    #{id}
+                </foreach>
+            )
+    </update>
+    <!--批量删除  -->
+    <delete id="deleteDepts">
+        delete from dept_p where dept_id in (
+        <foreach collection="array" item="deptId" separator=",">
+            #{deptId}
+        </foreach>
+        )
+    </delete>
+
+    <!--部门新增  Oracle做新增时 如果数据为空会报错  需要指定类型-->
+    <insert id="saveDept" parameterType="Dept">
+        insert into dept_p
+        (dept_id,dept_name,parent_id,state,create_time)
+        values(#{deptId},
+        #{deptName},
+        #{parentDept.deptId},
+        #{state},
+        #{createTime}
+        )
+    </insert>
+
+</mapper>

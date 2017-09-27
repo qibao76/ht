@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="@localhost" uuid="8b02e904-a805-499e-83b2-fc29143eaf55">
+      <database-info product="Oracle" version="Oracle Database 10g Express Edition Release 10.2.0.1.0 - Production" jdbc-version="11.1" driver-name="Oracle JDBC driver" driver-version="11.1.0.7.0-Production">
+        <extra-name-characters>$#</extra-name-characters>
+        <identifier-quote-string>&quot;</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="upper" quoted-identifiers="exact" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>sys as SYSDBA</user-name>
+      <resolve-scope>*:PUBLIC,SYS</resolve-scope>
+    </data-source>
+    <data-source name="@176.46.50.6" uuid="d9b0f29c-9b04-4292-8639-faa10772a66d">
+      <database-info product="Oracle" version="Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - Production&#10;With the Partitioning, OLAP, Data Mining and Real Application Testing options" jdbc-version="11.1" driver-name="Oracle JDBC driver" driver-version="11.1.0.7.0-Production">
+        <extra-name-characters>$#</extra-name-characters>
+        <identifier-quote-string>&quot;</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="upper" quoted-identifiers="exact" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>jsd1705</user-name>
+      <resolve-scope>*:JSD1705,PUBLIC</resolve-scope>
+    </data-source>
+  </component>
+</project>

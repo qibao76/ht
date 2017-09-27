@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tarena.ht.mapper.ModuleMapper">
+    <select id="findModuleList" resultMap="ModuleRM">
+        SELECT * FROM
+         module_p m
+        LEFT JOIN
+        (SELECT module_id AS p_id,NAME AS p_name FROM module_p)p
+         ON m.parent_id = p.p_id
+      order by order_no
+    </select>
+
+    <resultMap type="Module" id="ModuleRM" autoMapping="true">
+        <id property="moduleId" column="MODULE_ID"/>
+        <!--一对一关联上级模块  -->
+        <association property="parentModule" javaType="Module">
+            <id property="moduleId" column="P_ID"/>
+            <result property="name" column="P_NAME"/>
+        </association>
+    </resultMap>
+    <insert id="saveModule">
+       insert into module_p ( MODULE_ID,PARENT_ID,NAME ,CTYPE,STATE,ORDER_NO,
+       REMARK,CREATE_BY,CREATE_DEPT ,CREATE_TIME,UPDATE_BY,UPDATE_TIME )
+       values(
+			#{moduleId},
+			#{parentModule.moduleId},
+			#{name},
+			#{ctype},
+			#{state},
+			#{orderNo},
+			#{remark},
+			#{createBy,jdbcType=VARCHAR},
+			#{createDept,jdbcType=VARCHAR},
+			#{createTime,jdbcType=DATE},
+			#{updateBy,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=DATE}
+		)
+    </insert>
+    <delete id="deletemodules">
+        delete from module_p where module_id in (
+        <foreach collection="array" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </delete>
+    <update id="updateModule">
+        update module_p
+        <set>
+            parent_id=#{parentModule.moduleId},
+            name = #{name},
+            ctype =#{ctype},
+            order_no=#{orderNo},
+            remark =#{remark},
+            <if test="createBy !=null">create_by=#{createBy},</if>
+            <if test="createDept !=null">create_dept=#{createDept},</if>
+            <if test="createTime !=null">create_time=#{createTime},</if>
+            <if test="updateBy !=null">update_by=#{updateBy},</if>
+            <if test="updateTime !=null">update_time=#{updateTime},</if>
+        </set>
+        where module_id = #{moduleId}
+    </update>
+    <select id="findModuleByID" resultMap="ModuleRM">
+        SELECT * FROM
+         module_p m
+        LEFT JOIN
+        (SELECT module_id AS p_id,NAME AS p_name FROM module_p)p
+         ON m.parent_id = p.p_id
+        where module_id=#{moduleId}
+    </select>
+
+
+</mapper>

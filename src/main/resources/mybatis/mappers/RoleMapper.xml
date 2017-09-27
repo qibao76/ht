@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tarena.ht.mapper.RoleMapper">
+
+    <insert id="save">
+        INSERT INTO role_p
+        VALUES (
+           #{roleId,jdbcType=VARCHAR},
+			#{name,jdbcType=VARCHAR},
+			#{remarks,jdbcType=VARCHAR},
+			#{orderNo,jdbcType=VARCHAR},
+			#{createBy,jdbcType=VARCHAR},
+			#{createDept,jdbcType=VARCHAR},
+			#{createTime,jdbcType=DATE},
+			#{updateBy,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=DATE}
+
+        )
+    </insert>
+    <select id="findRole" resultType="Role">
+        SELECT * from role_p
+        where role_id =#{roleId}
+    </select>
+    <delete id="deleteRole">
+        DELETE FROM role_p WHERE role_id=#{roleId}
+    </delete>
+
+    <update id="updateRole" parameterType="Role">
+        update role_p
+        <set>
+            name=#{name},
+            remarks=#{remarks},
+            order_no=#{orderNo},
+            <if test="createBy !=null">create_by=#{createBy},</if>
+            <if test="createDept !=null">create_dept=#{createDept},</if>
+            <if test="createTime !=null">create_time=#{createTime},</if>
+            <if test="updateBy !=null">update_by=#{updateBy},</if>
+            <if test="updateTime !=null">update_time=#{updateTime},</if>
+        </set>
+        where role_id =#{roleId}
+    </update>
+
+</mapper>

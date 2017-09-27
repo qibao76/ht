@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="HT1608:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="HT1608-0.0.1-SNAPSHOT.war">
+      <element id="artifact" artifact-name="HT1608:war exploded" />
+    </root>
+  </artifact>
+</component>
